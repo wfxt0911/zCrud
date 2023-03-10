@@ -6,7 +6,7 @@ const install = (Vue, options) => {
   } else {
     Vue.prototype.$d2CrudSize = null
   }
-  Vue.component('d2Crud', d2Crud)
+  Vue.component('Crud', d2Crud)
 }
 if (typeof window !== 'undefined' && window.Vue) {
   install(window.Vue)

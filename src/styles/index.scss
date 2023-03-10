@@ -63,3 +63,8 @@ div:focus {
 .app-container {
   padding: 20px;
 }
+
+.hidden-container{
+  height: calc(100vh - 50px);
+  padding: 20px 20px 0 20px;
+}

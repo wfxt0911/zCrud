@@ -11,19 +11,42 @@
       </Crud>
     </div>
   </template>
-  
-  
-  
+
+
+
   <script>
-  import Crud from '@/components/Crud/d2-crud.vue' //上文的crudOptions配置
+
   import {crudOptions} from './crud.js'
   export default {
     name: 'testPage',
-    components:{Crud},
+    components:{},
     data(){
       return {
         option:{},
-        tableList:[]
+        tableList:[
+          {
+          createDate:'2023-03-09',
+          status:'0',
+          province:'广东'
+        },{
+          createDate:'2023-03-08',
+          status:'0',
+          province:'江西'
+        },{
+          createDate:'2023-03-09',
+          status:'0',
+          province:'湖南'
+        },{
+          createDate:'2023-03-19',
+          status:'0',
+          province:'吉林'
+        },{
+          createDate:'2023-03-29',
+          status:'0',
+          province:'海南'
+        },
+
+      ]
       }
     },
     created(){
@@ -32,8 +55,7 @@
     methods: {
       getCrudOptions () { return crudOptions(this) },
       addRow(){
-        console.log( this.$refs);
-        this.$refs.crud.showDialog('add')
+        this.$refs.crud.showDialog({mode:'add'})
       }
     }
   }

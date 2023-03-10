@@ -45,6 +45,12 @@ export const constantRoutes = [
         meta: { title: 'Table', icon: 'table' }
       },
       {
+        path: 'z-crud',
+        name: 'Z-crud',
+        component: () => import('@/views/demo/z-crud/index'),
+        meta: { title: 'z-crud', icon: 'table' }
+      },
+      {
         path: 'tree',
         name: 'Tree',
         component: () => import('@/views/tree/index'),

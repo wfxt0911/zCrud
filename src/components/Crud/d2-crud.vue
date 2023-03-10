@@ -15,7 +15,7 @@
       <el-table
         ref="elTable"
         :data="d2CrudData"
-        v-bind="options" 
+        v-bind="options"
         @current-change="handleCurrentChange"
         @select="handleSelect"
         @select-all="handleSelectAll"
@@ -47,7 +47,7 @@
           v-bind="indexRow"
         >
         </el-table-column>
-        <!-- 暂不使用d2-column递归组件，有bug -->
+        <!-- 业务列 -->
         <el-table-column
           v-for="(item, index) in columns"
           :key="index"
@@ -55,7 +55,12 @@
           :prop="handleAttribute(item.key, null)"
           v-bind="item"
         >
+        <!-- 作用域插槽 -->
+          <!-- 第一级数据 -->
+          <!-- 此处写法不好,过多的重复代码嵌套,应该提取一个组件 -->
           <template slot-scope="scope">
+            <!-- $d2CrudSize为插件注册时，可以配置的全局size -->
+            <!-- 输入框 -->
             <el-input
               v-if="item.component && item.component.name === 'el-input'"
               v-model="scope.row[item.key]"
@@ -63,6 +68,7 @@
               @change="$emit('cell-data-change', {rowIndex: scope.$index, key: item.key, value: scope.row[item.key], row: scope.row})"
             >
             </el-input>
+            <!-- 步进器 -->
             <el-input-number
               v-else-if="item.component && item.component.name === 'el-input-number'"
               v-model="scope.row[item.key]"
@@ -70,6 +76,7 @@
               @change="$emit('cell-data-change', {rowIndex: scope.$index, key: item.key, value: scope.row[item.key], row: scope.row})"
             >
             </el-input-number>
+            <!-- 单选框 -->
             <el-radio-group
               v-else-if="item.component && item.component.name === 'el-radio'"
               v-model="scope.row[item.key]"
@@ -95,6 +102,7 @@
                 </el-radio>
               </template>
             </el-radio-group>
+            <!-- 多选框 -->
             <el-checkbox-group
               v-else-if="item.component && item.component.name === 'el-checkbox'"
               v-model="scope.row[item.key]"
@@ -120,6 +128,7 @@
                 </el-checkbox>
               </template>
             </el-checkbox-group>
+            <!-- 下拉框 -->
             <el-select
               v-else-if="item.component && item.component.name === 'el-select'"
               v-model="scope.row[item.key]"
@@ -133,6 +142,7 @@
               >
               </el-option>
             </el-select>
+            <!-- 级联选择器 -->
             <el-cascader
               v-else-if="item.component && item.component.name === 'el-cascader'"
               v-model="scope.row[item.key]"
@@ -140,6 +150,7 @@
               @change="$emit('cell-data-change', {rowIndex: scope.$index, key: item.key, value: scope.row[item.key], row: scope.row})"
             >
             </el-cascader>
+            <!-- 开关 -->
             <el-switch
               v-else-if="item.component && item.component.name === 'el-switch'"
               v-model="scope.row[item.key]"
@@ -147,6 +158,7 @@
               @change="$emit('cell-data-change', {rowIndex: scope.$index, key: item.key, value: scope.row[item.key], row: scope.row})"
             >
             </el-switch>
+            <!-- 滑块 -->
             <el-slider
               v-else-if="item.component && item.component.name === 'el-slider'"
               v-model="scope.row[item.key]"
@@ -154,6 +166,7 @@
               @change="$emit('cell-data-change', {rowIndex: scope.$index, key: item.key, value: scope.row[item.key], row: scope.row})"
             >
             </el-slider>
+            <!-- 时间选择器 -->
             <el-time-select
               v-else-if="item.component && item.component.name === 'el-time-select'"
               v-model="scope.row[item.key]"
@@ -161,6 +174,7 @@
               @change="$emit('cell-data-change', {rowIndex: scope.$index, key: item.key, value: scope.row[item.key], row: scope.row})"
             >
             </el-time-select>
+            <!-- 时间范围选择器 -->
             <el-time-picker
               v-else-if="item.component && item.component.name === 'el-time-picker'"
               v-model="scope.row[item.key]"
@@ -168,6 +182,7 @@
               @change="$emit('cell-data-change', {rowIndex: scope.$index, key: item.key, value: scope.row[item.key], row: scope.row})"
             >
             </el-time-picker>
+            <!-- 日期范围选择器 -->
             <el-date-picker
               v-else-if="item.component && item.component.name === 'el-date-picker'"
               v-model="scope.row[item.key]"
@@ -175,6 +190,7 @@
               @change="$emit('cell-data-change', {rowIndex: scope.$index, key: item.key, value: scope.row[item.key], row: scope.row})"
             >
             </el-date-picker>
+            <!-- 评分 -->
             <el-rate
               v-else-if="item.component && item.component.name === 'el-rate'"
               v-model="scope.row[item.key]"
@@ -182,6 +198,7 @@
               @change="$emit('cell-data-change', {rowIndex: scope.$index, key: item.key, value: scope.row[item.key], row: scope.row})"
             >
             </el-rate>
+            <!-- 颜色选择器 -->
             <el-color-picker
               v-else-if="item.component && item.component.name === 'el-color-picker'"
               v-model="scope.row[item.key]"
@@ -189,6 +206,7 @@
               @change="$emit('cell-data-change', {rowIndex: scope.$index, key: item.key, value: scope.row[item.key], row: scope.row})"
             >
             </el-color-picker>
+            <!-- 自定义组件 -->
             <render-custom-component
               v-else-if="item.component && item.component.name"
               v-model="scope.row[item.key]"
@@ -196,14 +214,17 @@
               :props="item.component.props ? item.component.props : null"
               :scope="scope">
             </render-custom-component>
+            <!-- 渲染函数来实现组件的方式 -->
             <render-component
               v-else-if="item.component && item.component.render"
               :render-function="item.component.render"
               :scope="scope"
             >
             </render-component>
+            <!-- 最后的一种情况 ，如果有格式化函数则格式化，如果没有则直接显示数据-->
             <template v-else>{{item.formatter ? item.formatter(scope.row, scope.column, _get(scope.row, item.key), scope.$index) : _get(scope.row, item.key)}}</template>
           </template>
+          <!-- 如果有嵌套，第二级数据 -->
           <template v-if="item.children">
             <el-table-column
               v-for="(item2, index2) in item.children"
@@ -361,6 +382,7 @@
                 </render-component>
                 <template v-else>{{item2.formatter ? item2.formatter(scope.row, scope.column, _get(scope.row, item2.key), scope.$index) : _get(scope.row, item2.key)}}</template>
               </template>
+              <!-- 第三级数据 -->
               <template v-if="item2.children">
                 <el-table-column
                   v-for="(item3, index3) in item2.children"
@@ -526,7 +548,7 @@
           </template>
           <!-- <d2-column v-if="item.children" :columns="item.children"></d2-column> -->
         </el-table-column>
-        <!-- <d2-column :columns="columns"></d2-column> -->
+       <!-- 操作列 -->
         <el-table-column
           v-if="rowHandle"
           :label="handleAttribute(rowHandle.columnHeader, '操作')"
@@ -578,7 +600,7 @@
       </el-pagination>
     </div>
 
-    <!-- //新增或者修改弹窗 -->
+    <!-- 新增或者修改弹窗 -->
     <el-dialog
       v-if="isDialogShow"
       :title="formMode === 'edit' ? editTitle : addTitle"
