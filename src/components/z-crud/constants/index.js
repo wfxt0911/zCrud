@@ -1,5 +1,5 @@
 export const MODE = {
   EDIT: 'edit',
-  ADD: 'add',
+  CREATE: 'create',
   SEARCH: 'search'
 }

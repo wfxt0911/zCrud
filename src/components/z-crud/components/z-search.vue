@@ -1,20 +1,22 @@
 <template>
-  <div class='z-search ' v-if="isShowSearch">
-    <el-form ref="form" :model="query" v-bind="$attrs" :labelWidth="handleAttribute($attrs.labelWidth, '100px')"
-      :size="handleAttribute($attrs.size, defaultSize)">
-      <z-form-all-item :mode="mode" :formData="query" :gutter="$attrs.gutter"
-        :size="handleAttribute($attrs.size, defaultSize)"></z-form-all-item>
-    </el-form>
-    <div class="z-search__btns">
-      <el-button :size="handleAttribute($attrs.size, defaultSize)" type="primary" @click="search">查询</el-button>
-      <el-button :size="handleAttribute($attrs.size, defaultSize)" @click="searchReset">重置</el-button>
+  <transition name="fade">
+    <div class='z-search ' v-if="isShowSearch">
+      <el-form ref="form" :model="query" v-bind="$attrs" :labelWidth="get($attrs,'labelWidth', '100px')"
+        :size="get($attrs,'size', defaultSize)">
+        <z-form-all-item :mode="MODE.SEARCH" :formData="query" :gutter="$attrs.gutter"
+          :size="get($attrs,'size', defaultSize)"></z-form-all-item>
+      </el-form>
+      <div class="z-search__btns">
+        <el-button :size="get($attrs,'size', defaultSize)" type="primary" @click="search">查询</el-button>
+        <el-button :size="get($attrs,'size', defaultSize)" @click="searchReset">重置</el-button>
+      </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script>
 import zFormAllItem from './z-form-all-item.vue'
-import { MODE } from '../constants/index'
+import {MODE} from '../constants/index'
 export default {
   name: 'z-search',
   components: { zFormAllItem },
@@ -24,18 +26,19 @@ export default {
       default: () => { }
     }
   },
-  inject: ['handleAttribute', 'deepCopy'],
+  inject: [ 'deepCopy','get'],
   data() {
     return {
-      mode: MODE.SEARCH,
-      defaultSize: 'small',
-      defaultQuery: undefined
+      defaultSize: 'mini',
+      defaultQuery: undefined,
+      showSearchFlag: true,
+      MODE:MODE
     };
   },
 
   computed: {
     isShowSearch() {
-      return this.query && this.query != {}
+      return this.query && this.query != {} && this.showSearchFlag
     }
   },
   mounted() {
@@ -50,11 +53,7 @@ export default {
       this.$parent?.$emit('search-reset')
     },
     search() {
-      let query = {}
-      Object.keys(this.query).forEach(key => {
-        query[key] = this.query[key].value
-      })
-      this.$parent?.$emit('search', query)
+      this.$parent?.$emit('search')
     }
   }
 }
@@ -76,8 +75,23 @@ export default {
     // align-items: top;
 
   }
-  ::v-deep .el-form-item__label{
+
+  ::v-deep .el-form-item__label {
     font-weight: 500;
   }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: all .1s;
+  opacity: 1;
+
+}
+
+.fade-enter,
+.fade-leave-to {
+  transform: translateY(-300px);
+  opacity: 0;
+
 }
 </style>

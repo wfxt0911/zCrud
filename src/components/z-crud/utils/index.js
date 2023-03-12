@@ -1,10 +1,5 @@
-// 设置属性
-export const handleAttribute = (attribute, defaultValue) => {
-  if (attribute === false || attribute === 0 || attribute === '') {
-    return attribute
-  }
-  return attribute || defaultValue
-}
+
+
 /**
  * 深拷贝
  * @param source 需要拷贝的数据
@@ -33,5 +28,10 @@ export const deepCopy = (source) => {
 
   return target;
 };
+
+
+export const  isUndefined=(value)=> {
+  return value === undefined
+}
 
 

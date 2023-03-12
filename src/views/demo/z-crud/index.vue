@@ -1,12 +1,15 @@
 <template>
   <div class='z-crud-demo hidden-container'>
-    <zCrud v-bind="options" @search-item-change="searchItemChange" @search-reset="searchReset" @search="search"
-      @edit="edit" @pagination-size-change="paginationSizeChange">
+    <zCrud ref="zCrud" v-bind="options"  @search-reset="searchReset"
+      @search="search" @remove="remove" @pagination-size-change="paginationSizeChange"
+      @pagination-current-change="paginationcurrentChange" @before-edit="beforeEdit" @multiple-remove="multipleRemove">
+      <template #category="{ row }">{{ categoryFormat(row.category) }}</template>
     </zCrud>
   </div>
 </template>
 
 <script>
+import { getList } from '@/api/goods'
 import options from './options'
 export default {
   name: 'z-crud-demo',
@@ -19,36 +22,59 @@ export default {
 
 
   mounted() {
-
-    for (let index = 0; index < 30; index++) {
-      this.options.data.push(
-        {
-          name: '李四',
-          subject: '语文',
-          teacher: '杜甫'
-        }
-      )
-    }
+    this.getList()
   },
 
   destroyed() { },
 
   methods: {
-    searchItemChange(row, field) {
-    },
     searchReset() {
     },
     search(query) {
+      this.getList()
     },
-    edit({ row, index }) {
-      console.log("🚀 ~ file: index.vue:38 ~ edit ~ index:", index)
-      console.log("🚀 ~ file: index.vue:38 ~ edit ~ row:", row)
+    paginationSizeChange() {
+      this.getList()
+    },
+    paginationcurrentChange() {
+      this.getList()
+    },
+    beforeEdit({ row, index }) {
+      // this.$refs.zCrud.setFormItemData()
+    },
+    async getList() {
+
+      const param = this.$refs.zCrud.$z.getParam()
+      this.$refs.zCrud.$z.showLoading()
+      const res = await getList({ ...this.options.paginationOption, ...param })
+      this.options.data = res.data.list
+      this.options.paginationOption.total = res.data.total
+      this.$refs.zCrud.$z.hideLoading()
+    },
+    remove({ id }) {
+      //模拟接口删除
+      // 删除后重新请求下数据
+      this.getList()
+      this.$notify.success({ title: '提示', message: '删除成功' })
 
     },
-    paginationSizeChange(pageSize) {
-      console.log("🚀 ~ file: index.vue:43 ~ paginationSizeChange ~ pageSize:", pageSize)
-
-
+    multipleRemove(selection) {
+      //模拟接口删除
+      // 删除后重新请求下数据
+      this.getList()
+      this.$notify.success({ title: '提示', message: '删除成功' })
+    },
+    categoryFormat(val) {
+      switch (val) {
+        case 2:
+          return '家电'
+        case 3:
+          return '家具'
+        case 4:
+          return '食物'
+        default:
+          return '未知'
+      }
     }
   }
 }
