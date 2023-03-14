@@ -14,7 +14,6 @@ import router from './router'
 
 import '@/icons' // icon
 import '@/permission' // permission control
-import Crud  from '@/components/Crud/index.js'
 import zCrud  from '@/components/z-crud'
 
 /**
@@ -31,7 +30,6 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 Vue.use(ElementUI)
-Vue.use(Crud.install)
 Vue.use(zCrud.install)
 
 

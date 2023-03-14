@@ -1,6 +1,7 @@
 <template>
   <div class='z-dialog'>
-    <el-dialog :title="title" :visible="isShowDialog" :before-close="beforeClose" v-bind="dialogOption">
+    <el-dialog :title="title" :visible="isShowDialog" :before-close="beforeClose" v-bind="dialogOption"
+      @open="dialogOpen">
       <el-form ref="form" :model="formData" :rules="get(formOption, 'rules', {})" v-bind="formOption"
         :labelWidth="get(formOption, 'labelWidth', '80px')">
 
@@ -36,7 +37,7 @@ import zFormAllItem from './z-form-all-item.vue'
 export default {
   name: 'z-dialog',
   components: { zFormAllItem },
-  inject: ['get', 'currentMode'],
+  inject: ['get', 'currentMode', 'deepCopy'],
   props: {
     dialogOption: {
       type: Object,
@@ -58,8 +59,8 @@ export default {
   data() {
     return {
       formDefaultSize: 'medium',
-      footerButtionSize: 'mini',
-      footerButtonType: 'primary'
+      footerButtionSize: 'small',
+      footerButtonType: 'primary',
     };
   },
   computed: {
@@ -68,35 +69,44 @@ export default {
     },
     formData() {
       const _obj = {}
-       Object.keys(this.formItemOption).forEach(key => {
-        Reflect.set(_obj,key, this.formItemOption[key].value)
+      Object.keys(this.formItemOption).forEach(key => {
+        Reflect.set(_obj, key, this.formItemOption[key].value)
       })
       return _obj
     }
   },
+  created() {
 
+  },
   mounted() { },
 
   destroyed() { },
 
   methods: {
     closeDialog() {
+      this.$parent.$emit('dialog-close')
       this.$emit('update:isShowDialog', false)
     },
     beforeClose() {
       this.closeDialog()
     },
-    handleFormRulesMode() { },
+    dialogOpen() {
+      this.$parent.$emit('dialog-after-open', this.$parent.currentMode)
+    },
     handleSave() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          this.$parent.getFormItemData()
+          this.beforeClose()
+          this.$parent.$emit('save', {
+            form: this.$parent.getFormItemData(),
+            mode: this.$parent.currentMode
+          })
         } else {
 
         }
       })
 
-    }
+    },
   }
 }
 

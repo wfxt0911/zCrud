@@ -7,3 +7,13 @@ export function getList(params) {
     params
   })
 }
+
+
+export function getDetailById(params) {
+  return request({
+    url: '/goods/detail',
+    method: 'get',
+    params
+  })
+}
+

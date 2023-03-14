@@ -1,23 +1,20 @@
 <template>
-  <div class='z-crud'>
-    <zSearch ref="zSearch" v-bind="get($attrs,'searchOption', null)"></zSearch>
+  <div class='z-crud' :style="style">
+    <zSearch ref="zSearch" v-bind="get($attrs, 'searchOption', null)"></zSearch>
     <zToolbar :toolbarOption="$attrs.toolbarOption">
       <template #toolbar>
         <slot name="toolbar"></slot>
       </template>
     </zToolbar>
     <zTable ref="zTable" :data="$attrs.data" :selectionOption="$attrs.selectionOption" :indexOption="$attrs.indexOption"
-      :columns="$attrs.columns" :handleOption="$attrs.handleOption" :tableOption="tableOption"
-      :loading="loading"
-      >
+      :columns="$attrs.columns" :handleOption="$attrs.handleOption" :tableOption="tableOption" :loading="loading">
       <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
         <slot :name="slot" v-bind="scope" />
       </template>
     </zTable>
-
     <zPaper :paginationOption="$attrs.paginationOption"></zPaper>
-    <zDialog :isShowDialog.sync="isShowDialog" :dialogOption="$attrs.dialogOption"
-     :formOption="$attrs.formOption" :formItemOption="$attrs.formItemOption"></zDialog>
+    <zDialog ref="zDialog" :isShowDialog.sync="isShowDialog" :dialogOption="$attrs.dialogOption"
+      :formOption="$attrs.formOption" :formItemOption="storageFormItemOption"></zDialog>
   </div>
 </template>
 

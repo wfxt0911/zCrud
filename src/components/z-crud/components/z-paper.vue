@@ -1,13 +1,10 @@
 <template>
-  <div class='z-paper'>
-    <!-- 分页 -->
+  <div class='z-paper'  v-if="paginationOption">
     <el-pagination v-bind="paginationOption" @size-change="handlePaginationSizeChange"
       @current-change="handlePaginationCurrentChange" @prev-click="handlePaginationPrevClick"
-      @next-click="handlePaginationNextClick"
-      :page-sizes="[5, 10, 20, 50]"
-      :layout="get(paginationOption,'layout', 'total, sizes, prev, pager, next, jumper')">
+      @next-click="handlePaginationNextClick" :page-sizes="[5, 10, 20, 50]"
+      :layout="get(paginationOption, 'layout', 'total, sizes, prev, pager, next, jumper')">
     </el-pagination>
-
   </div>
 </template>
 
@@ -38,14 +35,14 @@ export default {
  * @description 每页条数改变
  */
     handlePaginationSizeChange(pageSize) {
-      this.paginationOption.pageSize=pageSize
+      this.paginationOption.pageSize = pageSize
       this.$parent.$emit('pagination-size-change', pageSize)
     },
     /**
      * @description 当前页码改变
      */
     handlePaginationCurrentChange(currentPage) {
-      this.paginationOption.currentPage=currentPage
+      this.paginationOption.currentPage = currentPage
       this.$parent.$emit('pagination-current-change', currentPage)
     },
     /**
@@ -67,6 +64,7 @@ export default {
 </script>
 <style lang='scss' scoped>
 @import '../z-curd.scss';
+
 .z-paper {
   display: flex;
   align-items: center;

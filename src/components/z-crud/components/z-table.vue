@@ -23,30 +23,29 @@
         </template>
       </el-table-column>
       <!-- 操作列 -->
-      <el-table-column v-if="handleOption" :label="get(handleOption, 'columnHeader', '操作')" v-bind="handleOption"
+      <el-table-column v-if="get(handleOption,'show',true)" :label="get(handleOption, 'columnHeader', '操作')" v-bind="handleOption"
         :width="get(handleOption, 'width', '200px')" :align="tableColumnAlign">
         <template slot-scope="scope">
-          <el-button v-if="handleOption.edit && handleOptionButtonShow(handleOption.edit.show, scope.$index, scope.row)"
-            :disabled="handleOptionButtonDisabled(handleOption.edit.disabled, scope.$index, scope.row)"
-            v-bind="handleOption.edit" @click="handleEdit(scope.row, scope.$index)"
+          <el-button v-if="handleOptionButtonShow(get(handleOption, 'edit.show', true), scope.$index, scope.row)"
+            :disabled="handleOptionButtonDisabled(get(handleOption, 'edit.disabled', false), scope.$index, scope.row)"
+            v-bind="get(handleOption,'edit',{})" @click="handleEdit(scope.row, scope.$index)"
             :size="get(handleOption, 'edit.size', handleDefaultSize)"
             :type="get(handleOption, 'edit.type', handleDefaultType)">
             {{ get(handleOption, 'edit.text', '编辑') }}
           </el-button>
 
-          <el-button
-            v-if="handleOption.remove && handleOptionButtonShow(handleOption.remove.show, scope.$index, scope.row)"
+          <el-button v-if="handleOptionButtonShow(get(handleOption, 'remove.show', true), scope.$index, scope.row)"
             :type="get(handleOption, 'remove.type', 'danger')"
-            :disabled="handleOptionButtonDisabled(handleOption.remove.disabled, scope.$index, scope.row)"
-            v-bind="handleOption.remove" @click="handleRemove(scope.row, scope.$index)"
+            :disabled="handleOptionButtonDisabled(get(handleOption, 'remove.disabled', false), scope.$index, scope.row)"
+            v-bind="get(handleOption,'remove',{})" @click="handleRemove(scope.row, scope.$index)"
             :size="get(handleOption, 'remove.size', handleDefaultSize)">
             {{ get(handleOption, 'remove.text', '删除') }}
           </el-button>
           <template v-for="(item, index) in get(handleOption, 'custom', [])">
             <el-button :key="index" v-if="handleOptionButtonShow(item.show, scope.$index, scope.row)"
               :disabled="handleOptionButtonDisabled(item.disabled, scope.$index, scope.row)" v-bind="item"
-              :size="get(handleOption, 'edit.size', handleDefaultSize)"
-              :type="get(handleOption, 'edit.type', handleDefaultType)"
+              :size="get(item, 'size', handleDefaultSize)"
+              :type="get(item, 'type', handleDefaultType)"
               @click="$parent.$emit(item.emit, { row: scope.row, index: scope.$index, })">
               {{ item.text }}
             </el-button>
@@ -63,7 +62,7 @@ import { MODE } from '../constants';
 export default {
   name: 'z-table',
   components: {},
-  inject: ['get','deleteConfirm'],
+  inject: ['get', 'deleteConfirm'],
   props: {
     data: {
       type: Array,
@@ -90,8 +89,8 @@ export default {
       default: () => { }
     },
     loading: {
-      type: Boolean ,
-      default:false
+      type: Boolean,
+      default: false
     }
 
   },
@@ -235,11 +234,13 @@ export default {
     handleEdit(row, index) {
       this.$parent.$emit('before-edit', { row, index })
       this.$parent.currentMode = MODE.EDIT
+      this.$parent.$emit('dialog-before-open', this.$parent.currentMode)
+      this.$parent.resetFormItemOption()
       this.$parent.isShowDialog = true
     },
-    handleRemove(row){
+    handleRemove(row) {
       this.deleteConfirm().then(res => {
-        this.$parent.$emit('remove',row)
+        this.$parent.$emit('remove', row)
       }, err => {
         console.log(err);
       })

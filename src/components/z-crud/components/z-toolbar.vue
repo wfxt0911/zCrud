@@ -1,15 +1,15 @@
 <template>
-  <div class='z-toolbar' v-if="toolbarOption">
+  <div class='z-toolbar' v-if="get(toolbarOption,'show',true)">
     <div class="z-toolbar__left">
       <el-button v-if="get(toolbarOption, 'create.show', true)" :disabled="get(toolbarOption, 'create.disabled', false)"
-        v-bind="toolbarOption.create" @click="handleCteate" :size="get(toolbarOption, 'create.size', functionButtionSize)"
+        v-bind="get(toolbarOption,'create',{})" @click="handleCteate" :size="get(toolbarOption, 'create.size', functionButtionSize)"
         :type="get(toolbarOption, 'create.type', functionDefaultType)">
         {{ get(toolbarOption, 'create.text', '新增') }}
       </el-button>
 
       <el-button
         v-if="get(toolbarOption, 'multipleRemove.show', true) && get($parent, '$refs.zTable.selectionOption.show', true)"
-        :disabled="get(toolbarOption, 'multipleRemove.disabled', false)" v-bind="toolbarOption.create"
+        :disabled="get(toolbarOption, 'multipleRemove.disabled', false)"  v-bind="get(toolbarOption,'multipleRemove',{})"
         @click="handleMultipleRemove" :size="get(toolbarOption, 'multipleRemove.size', functionButtionSize)"
         :type="get(toolbarOption, 'multipleRemove.type', 'danger')">
         {{ get(toolbarOption, 'multipleRemove.text', '批量删除') }}
@@ -51,6 +51,7 @@ import { MODE } from '../constants';
 export default {
   name: 'z-toolbar',
   components: {},
+  inject:['get'],
   props: {
     toolbarOption: {
       type: Object,
@@ -60,11 +61,10 @@ export default {
   inject: ['get', 'deleteConfirm'],
   data() {
     return {
-      functionButtionSize: 'mini',
+      functionButtionSize: 'small',
       circleButtionSize: 'small',
       functionDefaultType: 'primary',
       drawer: false,
-
     };
   },
 
@@ -91,6 +91,8 @@ export default {
     },
     handleCteate() {
       this.$parent.currentMode = MODE.CREATE
+      this.$parent.$emit('dialog-before-open', this.$parent.currentMode)
+      this.$parent.resetFormItemOption()
       this.$parent.isShowDialog = true
     },
     handleMultipleRemove() {
@@ -116,7 +118,7 @@ export default {
 
 .z-toolbar {
   // border-top: 1px solid $border_color;
-  padding: 12px;
+  padding: 12px 0;
   display: flex;
   align-items: center;
   justify-content: space-between;

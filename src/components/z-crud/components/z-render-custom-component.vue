@@ -1,6 +1,8 @@
 <script>
+// import zCaptcha from '@/components/z-captcha'
 export default {
   name: 'z-render-custom-component',
+  components: {},
   props: {
     /**
      * @description v-model双向绑定的值
@@ -27,7 +29,7 @@ export default {
       default: null
     }
   },
-  render (h) {
+  render(h) {
     let self = this
     return h(self.componentName, {
       props: {
@@ -35,11 +37,7 @@ export default {
         scope: self.scope,
         ...self.props
       },
-      on: {
-        input: function (event) {
-          self.$emit('input', event)
-        }
-      }
+      on: self.$listeners
     })
   }
 }

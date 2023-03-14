@@ -29,7 +29,7 @@ export default {
   inject: [ 'deepCopy','get'],
   data() {
     return {
-      defaultSize: 'mini',
+      defaultSize: 'small',
       defaultQuery: undefined,
       showSearchFlag: true,
       MODE:MODE
@@ -50,6 +50,8 @@ export default {
   methods: {
     searchReset() {
       this.$parent.$attrs.searchOption.query = this.deepCopy(this.defaultQuery)
+      console.log("🚀 ~ file: z-search.vue:59 ~ search ~ this.$parent.$attrs:", this.$parent.$attrs)
+      this.$parent.resetPagination()
       this.$parent?.$emit('search-reset')
     },
     search() {
@@ -62,7 +64,7 @@ export default {
 <style lang='scss' scoped>
 .z-search {
   display: flex;
-  padding: 12px;
+  padding: 12px 0;
 
   .el-form {
     flex: 1;
